@@ -45,7 +45,7 @@ Gives dimentions of dataframe in 1 command.
 dim(gapminder)
 ```
 
-2. Alternative 2: 
+2. Alternative 2:
 
 Provides dimensions and type of each variable.
 ```{r}
@@ -55,3 +55,73 @@ str(gapminder)
 - What data type is each variable?
 
 Country and continent are factors (entered as integer dummy variables), year is an integer, life expectancy is numeric (double), population is an integer, and gdpPercap is numeric (double)
+
+## Explore individual variables
+
+### Categorical variable (Country)
+
+- What are possible values of each variable? What values are typical? 
+```{r}
+unique(gapminder$country)
+```
+
+This is a list of all of the countries in the gapminder dataset.
+
+```{r}
+length(unique(gapminder$country))
+```
+There are 142 countries.
+
+```{r}
+table(gapminder$country)
+```
+12 observations for each country.
+
+### Quantitative variable (gdpPerCap)
+
+- What are possible values of each variable? What values are typical? 
+```{r}
+summary(gapminder$gdpPercap)
+```
+Per capital GDP ranges from 241.2 to 113.500.
+
+```{r}
+x <- hist(gapminder$gdpPercap)
+x$breaks
+x$counts
+round((x$counts[1]/nrow(gapminder))*100,0)
+```
+Although per capital GDP is very right skewed, 77% of countries had a per capital GDP between 0 and 10,000.
+
+## Explore various plot types and use dplyr functions
+
+1. Look at gdpPercap by country
+```{r}
+base <- ggplot(aes(x=gdpPercap), data=gapminder)
+base + geom_density((aes(color = continent)))
+```
+
+Density of GDP observations grouped by continent. The Americas have quite a large spread, let's examine that further:
+
+```{r}
+filter(gapminder, continent=="Americas") %>% 
+  group_by(country) %>%
+  summarise(mean_country = mean(gdpPercap)) %>%
+  arrange(mean_country)
+```
+
+Haiti is the poorest and the U.S is the richest. Lets see which countries have gotten richer over time.
+
+```{r}
+filter(gapminder, continent=="Americas") %>% 
+  select(country, gdpPercap, year) %>%
+  ggplot(aes(x=year, y=gdpPercap)) + geom_point(aes(colour=country), alpha=0.3) + geom_smooth() + theme_classic()
+```
+
+Looks like overall the Americas have gotten richer, but particularly the U.S and Canada.
+
+## Report my process
+- I've used dplyr and ggplot quite a bit before, so it was all fairly easy, although all the components were a bit time consuming. I did take a look at Jenny Bryan's ggplot repo for some ideas.
+- This was my first time doing all my coding in a Markdown file and I really liked it. Is there a spell check function in Markdown though? My spelling is atrocious.  
+- Everything went smoothly creating the repo in github, cloning it in R studio, (pulling) and pushing the .rmd and .md files to github (yay!). I probably didn't need to create a seperate repo for homework 2 though. 
+
