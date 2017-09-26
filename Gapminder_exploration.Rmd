@@ -1,0 +1,57 @@
+---
+title: "Gapminder exploration"
+output: github_document 
+keep_md: true 
+---
+
+## Bring the data in
+
+```{r}
+library(gapminder)
+library(tidyverse)
+```
+
+## Smell test the data
+- Is it a data.frame, a matrix, a vector, a list?
+```{r}
+typeof(gapminder)
+```
+It is a list.
+
+- What’s its class?
+```{r}
+class(gapminder)
+```
+It is a data frame.
+
+- How many variables/columns?
+```{r}
+ncol(gapminder)
+```
+It has 6 columns.
+
+- How many rows/observations?
+```{r}
+nrow(gapminder)
+```
+It has 1704 rows.
+
+- Can you get these facts about “extent” or “size” in more than one way? Can you imagine different functions being useful in  different contexts?
+
+1. Alternative 1: 
+
+Gives dimentions of dataframe in 1 command.
+```{r}
+dim(gapminder)
+```
+
+2. Alternative 2: 
+
+Provides dimensions and type of each variable.
+```{r}
+str(gapminder)
+```
+
+- What data type is each variable?
+
+Country and continent are factors (entered as integer dummy variables), year is an integer, life expectancy is numeric (double), population is an integer, and gdpPercap is numeric (double)
