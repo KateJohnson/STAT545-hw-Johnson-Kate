@@ -1,5 +1,7 @@
-# STAT545-hw02-Johnson-Kate
+# STAT545-Johnson-Kate
 
-This is my Homework 2 Repository
+This is my STAT 545 Homework Repository
 
-I've done the assignment in a Markdown file [here](https://github.com/KateJohnson/STAT545-hw02-Johnson-Kate/blob/master/Gapminder_exploration.md)
+Assignment 2 is [here](https://github.com/KateJohnson/STAT545-hw02-Johnson-Kate/blob/master/Gapminder_exploration.md)
+
+Assignment 3 is
