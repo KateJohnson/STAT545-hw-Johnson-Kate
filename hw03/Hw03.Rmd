@@ -1,0 +1,6 @@
+---
+title: "Gapminder exploration"
+output: github_document 
+keep_md: true 
+---
+
