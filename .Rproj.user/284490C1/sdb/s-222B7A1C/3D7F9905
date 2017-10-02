@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Gapminder_exploration_cont\"\noutput: github_document \nkeep_md: true \n---\n\n",
+    "created" : 1506986472410.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2654515254",
+    "id" : "3D7F9905",
+    "lastKnownWriteTime" : 1506986637,
+    "last_content_update" : 1506986637376,
+    "path" : "~/Google Drive/Classes/STAT 545.547/STAT545-hw02-Johnson-Kate/hw03/Gapminder_exploration_cont.Rmd",
+    "project_path" : "hw03/Gapminder_exploration_cont.Rmd",
+    "properties" : {
+        "last_setup_crc32" : "B5E40117bb338d19",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
