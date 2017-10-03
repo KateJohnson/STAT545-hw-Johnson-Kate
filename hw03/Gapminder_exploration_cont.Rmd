@@ -1,5 +1,5 @@
 ---
-title: "Gapminder_exploration_cont"
+title: "Gapminder Exploration Continued"
 output: github_document 
 keep_md: true 
 ---
