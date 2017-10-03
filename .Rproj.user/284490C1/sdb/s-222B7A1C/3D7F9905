@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
-    "contents" : "---\ntitle: \"Gapminder_exploration_cont\"\noutput: github_document \nkeep_md: true \n---\n\n",
+    "contents" : "---\ntitle: \"Gapminder_exploration_cont\"\noutput: github_document \nkeep_md: true \n---\n\n## Load the data\n\n```{r}\nlibrary(gapminder)\nlibrary(tidyverse)\nlibrary(reshape2)\n```\n\n## Maximum and minimum GDP per capita\n\n```{r}\nmmGDP <- gapminder %>% \n          group_by(continent) %>%\n            summarise(max.GDP= max(gdpPercap), min.GDP= min(gdpPercap)) %>%\n              arrange(max.GDP)\n\nknitr::kable(mmGDP, digits=0, col.names=c(\"Continent\",\"Maximum per capita GDP\",\"Minimum per capita GDP\"))\n```\n\nAfrica has the lowest maximum and minimum per capita GDP. Asia has the highest per capita GDP, but it also the greatest range in GDP values, which indicates a large disparity in GDP between countries. I'll examine the range in per capita GDP within continents visually:\n\n\n```{r}\nmmGDP.plot <- melt(mmGDP, id=\"continent\") # reshape the data in order to plot min and max within continents on the same plot\n\nggplot(mmGDP.plot, aes(x=continent, y=log10(value), fill=variable)) + \n            geom_bar(position=\"dodge\", stat=\"identity\") + \n            ylab(\"Per capita GDP (log transformed)\") + xlab(\"Continent\") +\n            scale_fill_discrete(name=\"\", labels=c(\"maximum\",\"minimum\"))+\n            theme_classic()\n```\n\nThe ggplot confirms that Asia has the greatest range in per capita GDP. The range of GDP in Oceania is much smaller than in the other continents.\n\n**Comments on the process**\n\nI had trouble finding how to rename the columns in the kable table, I used code from Kozp's [Homework 2](https://github.com/Kozp/STAT545-hw-Kozik-Pavel/blob/Side-Branch/hw02/hw2.md) to help. For the ggplot, I intitially tried to create two bars for minimum and maximum using variations of 'position=dodge'. I couldn't get that to work, but noticed that the 'fill' function produced the plot I wanted as shown [here](http://ggplot2.tidyverse.org/reference/position_dodge.html). I learned how to use the reshape function from [this](http://www.statmethods.net/management/reshape.html) QuickR page.\n\n\n",
     "created" : 1506986472410.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2654515254",
+    "hash" : "707783093",
     "id" : "3D7F9905",
-    "lastKnownWriteTime" : 1506986637,
-    "last_content_update" : 1506986637376,
+    "lastKnownWriteTime" : 1506992856,
+    "last_content_update" : 1506992856853,
     "path" : "~/Google Drive/Classes/STAT 545.547/STAT545-hw02-Johnson-Kate/hw03/Gapminder_exploration_cont.Rmd",
     "project_path" : "hw03/Gapminder_exploration_cont.Rmd",
     "properties" : {
