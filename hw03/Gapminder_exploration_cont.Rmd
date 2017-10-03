@@ -99,4 +99,4 @@ Now I can see that on average in Asia, life expectancy has increased with GDP re
 
 **Comments on the process**
 
-This question was relatively simple to address, so no big problems. I found how to add year labels above the point from [this](https://stackoverflow.com/questions/15624656/label-points-in-geom-point) stackoverflow post. I could have improved my plotting of the trend line by specifying a linear model in the stat_smooth function and including a quadratic year term in the model to allow for non linearity.
+This question was relatively simple to address, so no big problems. I found how to add year labels above the point from [this](https://stackoverflow.com/questions/15624656/label-points-in-geom-point) stackoverflow post. I could have improved my plotting of the trend line by specifying a linear model in the stat_smooth function and including a quadratic year term in the model to allow for non linearity. My loess line is also covering some point labels, if I were publishing this plot I'd have to figure out how to specify a justification for each point individually.
