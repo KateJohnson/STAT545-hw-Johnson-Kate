@@ -1,0 +1,3 @@
+"0","gapminder %>% "
+"0","    group_by(country) %>% "
+"0","    mutate(pop_growth = pop - pop[year==1972])"

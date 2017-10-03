@@ -1,0 +1,6 @@
+"0","## Correct:"
+"0","p1 +"
+"0","    theme_bw() +"
+"0","    theme(strip.background = element_rect(fill=""orange""),"
+"0","          axis.title = element_text(size=14),"
+"0","          strip.text = element_text(size=14, face=""bold""))"

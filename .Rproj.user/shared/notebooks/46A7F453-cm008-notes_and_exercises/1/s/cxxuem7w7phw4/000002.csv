@@ -1,0 +1,4 @@
+"0","gapminder %>%"
+"0","    group_by(continent) %>% "
+"0","    summarize(mean_gdpPercap = mean(gdpPercap),"
+"0","              n_countries    = length(gdpPercap))"

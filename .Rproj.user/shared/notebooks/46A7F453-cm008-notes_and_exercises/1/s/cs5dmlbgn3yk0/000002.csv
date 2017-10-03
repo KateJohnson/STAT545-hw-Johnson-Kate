@@ -1,0 +1,5 @@
+"0","p1 <- ggplot(gapminder, aes(gdpPercap, lifeExp)) +"
+"0","    facet_wrap(~ continent) +"
+"0","    geom_point(colour=""#386CB0"", alpha=0.2) +"
+"0","    scale_x_log10()"
+"0","p1 + theme_bw()"

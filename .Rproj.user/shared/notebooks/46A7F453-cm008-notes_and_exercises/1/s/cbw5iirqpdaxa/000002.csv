@@ -1,0 +1,20 @@
+"0","fit1"
+"1","
+Call:
+"
+"1","lm(formula = lifeExp ~ log(gdpPercap), data = gapminder)"
+"1","
+
+"
+"1","Coefficients:
+"
+"1","   (Intercept)  "
+"1","log(gdpPercap)  "
+"1","
+"
+"1","        -9.101  "
+"1","         8.405  "
+"1","
+"
+"1","
+"

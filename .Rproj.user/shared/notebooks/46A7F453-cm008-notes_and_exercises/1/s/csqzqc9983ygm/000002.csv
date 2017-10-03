@@ -1,0 +1,4 @@
+"0","ggplot(gapminder, aes(gdpPercap, lifeExp)) +"
+"0","    geom_point(alpha=0.1) +"
+"0","    geom_point(y=predict(fit1), colour=""red"") +"
+"0","    scale_x_log10()"
