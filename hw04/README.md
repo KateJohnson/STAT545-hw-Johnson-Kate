@@ -1,3 +1,3 @@
-This is my Homework 4 Folder.
+## STAT 545 Homework 03
 
-My assignment is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw04/Gapminder_merges_joins.md)
+My homework 4 can be found [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw04/Gapminder_merges_joins.md)
