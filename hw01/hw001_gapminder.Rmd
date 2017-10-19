@@ -1,0 +1,27 @@
+---
+title: "Cm004"
+output: github_document 
+keep_md: true  
+---
+# This is a level one header
+
+## This is a level two header
+
+This is a line of text.
+
+- bullet 1
+- bullet 2
+
+```{r, fig.width=3, fig.height=3}
+x <- rnorm(100)
+y <- rnorm(100)
+plot(x,y)
+```
+
+```{r}
+summary(x)
+```
+```{r this is the third chunk}
+x <- rnorm(100)
+```
+
