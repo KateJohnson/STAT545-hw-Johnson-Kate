@@ -10,7 +10,7 @@ I like:
   - R
   - ice cream
   - this gif 
-![](https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif)
+![](STAT545-hw-Johnson-Kate/hw01_GitHub_test_drive/giphy.webp)
 
 ## Homework Reflection
 
