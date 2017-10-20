@@ -34,7 +34,7 @@ levels(gapminder$continent)
 
     ## [1] "Africa"   "Americas" "Asia"     "Europe"   "Oceania"
 
-It has 5 levels for each continent.
+It has 5 levels.
 
 I'd like to **Drop Oceania** from the data frame and ensure that factor level is removed as well.
 
@@ -64,12 +64,12 @@ There are still 5 factor levels even though Oceania has been removed.
 ``` r
  gapminder.no$continent <-  gapminder.no$continent %>% 
                               fct_drop()
-levels(gapminder.no$continent) # Now how many factor levels?
+levels(gapminder.no$continent)
 ```
 
     ## [1] "Africa"   "Americas" "Asia"     "Europe"
 
-Now there are the correct number of factor levels.
+Now there are the correct factor levels.
 
 I will now **reorder the levels of continent** based on the median per capita GDP within each country, in descending order.
 
@@ -80,7 +80,7 @@ levels(gapminder.no$continent)
 
     ## [1] "Europe"   "Americas" "Asia"     "Africa"
 
-This reorded the factor levels, but let's see if the order of the data has changed:
+This reorded the factor levels as I wanted, but let's see if the order of the data has changed:
 
 ``` r
 head(gapminder) # orginal data
@@ -138,15 +138,18 @@ tail(gapminder.no) # reordered factor data
     ## 5 Zimbabwe    Africa  2002  39.989 11926563  672.0386
     ## 6 Zimbabwe    Africa  2007  43.487 12311143  469.7093
 
-Nope! Both the orginal dataframe and the dataframe with the reorded factor levels start with Asian and end with Africa.
+Nope. Both the orginal dataframe and the dataframe with the reorded factor levels are in the same order.
 
 How does this differ from **arrange**?
 
 ``` r
-gapminder.noa <- gapminder.no %>%
-                    group_by(continent) %>%
-                      mutate(med.gdp = median(gdpPercap)) %>%
-                       arrange(desc(med.gdp))
+gapminder.noa <- gapminder %>%
+                    filter(continent!= "Oceania") %>%
+                      group_by(continent) %>%
+                        mutate(med.gdp = median(gdpPercap)) %>%
+                         arrange(desc(med.gdp)) 
+
+gapminder.noa$continent <- fct_drop(gapminder.noa$continent)
 
 head(gapminder.noa)
 ```
@@ -163,27 +166,12 @@ head(gapminder.noa)
     ## 6 Albania    Europe  1977   68.93 2509048  3533.004 12081.75
 
 ``` r
-tail(gapminder.noa)
-```
-
-    ## # A tibble: 6 x 7
-    ## # Groups:   continent [1]
-    ##    country continent  year lifeExp      pop gdpPercap  med.gdp
-    ##     <fctr>    <fctr> <int>   <dbl>    <int>     <dbl>    <dbl>
-    ## 1 Zimbabwe    Africa  1982  60.363  7636524  788.8550 1192.138
-    ## 2 Zimbabwe    Africa  1987  62.351  9216418  706.1573 1192.138
-    ## 3 Zimbabwe    Africa  1992  60.377 10704340  693.4208 1192.138
-    ## 4 Zimbabwe    Africa  1997  46.809 11404948  792.4500 1192.138
-    ## 5 Zimbabwe    Africa  2002  39.989 11926563  672.0386 1192.138
-    ## 6 Zimbabwe    Africa  2007  43.487 12311143  469.7093 1192.138
-
-``` r
 levels(gapminder.noa$continent)
 ```
 
-    ## [1] "Europe"   "Americas" "Asia"     "Africa"
+    ## [1] "Africa"   "Americas" "Asia"     "Europe"
 
-With arrange the order of the data changes, and the continents are listed in the same order as the factor levels with fct\_reorder() (starts with Europe ends with Africa), but the order of the factor levels do not change.
+With arrange the order of the data changes so it is now in the same order as the factor levels with fct\_reorder() (starts with Europe), but the order of the factor levels do not change.
 
 Let's see whether the order of the data or the order of the factors dictate how this data is plotted.
 
@@ -193,7 +181,9 @@ ggplot(gapminder.noa, aes(x=continent, y=gdpPercap)) +
         theme_bw() + xlab("Continent") + ylab("Per Capita GDP")
 ```
 
-![](Factor_figure_management_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-9-1.png) Looks like it's the order of the factor levels that dictate plotting order. So if I wanted the same plot but in order of decreasing median GDP, I could use the dataframe I applied fct\_reorder to.
+![](Factor_figure_management_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-9-1.png)
+
+Looks like it's the order of the factor levels that dictate plotting order. So if I wanted the same plot but in order of decreasing median GDP, I could use the dataframe I applied fct\_reorder to.
 
 ``` r
 ggplot(gapminder.no, aes(x=continent, y=gdpPercap)) + 
@@ -208,7 +198,7 @@ Nice! :star:
 File I/O
 --------
 
-I'll go back to using the original gapminder data and fiddle with factor levels so they start with Asia, then Europe and after that I don't care about the order.
+I'll go back to using the original gapminder data and fiddle with factor levels so they start with Asia, then Europe, and after that I don't care about the order.
 
 ``` r
 gapminder$continent<- gapminder$continent %>% fct_relevel("Asia", "Europe")
@@ -252,7 +242,7 @@ tail(gapminder.range)
     ## 5   Oceania  2002   7497.953
     ## 6   Oceania  2007   9250.358
 
-As you can see, the data is order according the factor order for continent that I specified (starts with Asia, ends with Oceania.
+As you can see, the data is ordered according the factor order for continent that I specified (starts with Asia, ends with Oceania.
 
 Now, I'll export this data, but I want to preserve my hard-earned factor order.
 
@@ -266,7 +256,7 @@ getwd() # where is this going to save to?
 saveRDS(gapminder.range, "gapminder.range.rds")
 ```
 
-The .rds file is now in my hw05-Factors folder. Now I'll read it back in, I'm going to call it something different so that I can compare the original dataframe and the outputed/inputed one.
+The .rds file is now in my hw05-Factors folder. Now I'll read it back in but I'm going to call it something different so that I can compare the original dataframe and the outputed/inputed one.
 
 ``` r
 gapminder.range.in <- readRDS("gapminder.range.rds")
@@ -286,7 +276,43 @@ levels(gapminder.range.in$continent)
 
     ## [1] "Asia"     "Europe"   "Africa"   "Americas" "Oceania"
 
-Yup!
+Yup! :punch:
 
 Visualization design
 --------------------
+
+In Homework 2 I made a plot I'm not that proud of:
+
+``` r
+filter(gapminder, continent=="Americas") %>% 
+  select(country, gdpPercap, year) %>%
+  ggplot(aes(x=year, y=gdpPercap)) + geom_point(aes(colour=country), alpha=0.3) + geom_smooth() + theme_classic()
+```
+
+    ## `geom_smooth()` using method = 'loess'
+
+![](Factor_figure_management_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-16-1.png)
+
+It's really difficult to distinguish between countries with so many colours in the plot. Tamara Munzer mentioned you should use a maximum of ~8 colours per plot so I don't think there is a colour scheme that would make each country easily distinguishable, but maybe I could simplify the plot instead. First, rather than points I'll use lines as the trend is the message I'm trying to get across. Then I'll drop the smoothed mean trend line (stat\_smooth()) to de-clutter. Last, I'll focus on the two outlier countries that have increased in wealth exceptionally quickly by labelling them.
+
+``` r
+p <- gapminder %>% 
+        filter(continent=="Americas") %>%
+            ggplot(aes(x = year, y = gdpPercap)) +
+              geom_line(aes(color=country),lwd=1, show.legend=FALSE) + scale_color_manual(values = country_colors) +
+                theme_bw() + xlab("Year") + ylab("Per Capita GDP")
+    
+p <- p +  geom_text(data=subset(gapminder, country %in% c("Canada","United States") & year==2002), 
+         aes(x=year, y=gdpPercap, label=country), hjust=1.2)
+p            
+```
+
+![](Factor_figure_management_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-17-1.png)
+
+I think this plot is much better. I'll export it. (Note to reviewers: the labels only worked when I used geom\_text in a seperate step, I'd be interested to learn why.)
+
+``` r
+ggsave(p, file="GDP_Americas.png", width=4, height=3, scale=1.5, dpi=300)
+```
+
+Here's the exported file, supersized, high res, and linked back into this document: ![](/Users/katejohnson/Google%20Drive/Classes/STAT%20545.547/STAT545-hw-Johnson-Kate/STAT545-hw-Johnson-Kate_Oct5/hw05-Factors/GDP_Americas.png)
