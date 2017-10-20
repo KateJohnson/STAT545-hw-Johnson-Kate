@@ -1,4 +1,0 @@
-"0","ggplot(gapminder, aes(gdpPercap, lifeExp)) +"
-"0","    geom_point() +"
-"0","    geom_smooth(method=""lm"") +"
-"0","    scale_x_log10()"

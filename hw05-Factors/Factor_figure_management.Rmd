@@ -3,4 +3,131 @@ title: "Factor and Figure Management"
 output: github_document
 keep.md: TRUE
 ---
-hjh
+
+I will use the Gapminder data set for this assignment
+
+```{r}
+suppressPackageStartupMessages(library(gapminder))
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(forcats))
+```
+
+
+## Factor Management
+
+First, let's look at the data structure. 
+```{r}
+str(gapminder)
+```
+
+Continent is a factor.
+```{r}
+levels(gapminder$continent)
+```
+
+It has 5 levels for each continent. 
+
+I'd like to **Drop Oceania** from the data frame and ensure that factor level is removed as well. 
+```{r}
+length(which(gapminder$continent == "Oceania")) # How many Oceania rows are there?
+
+gapminder.no <- gapminder %>% 
+                  filter(continent != "Oceania") 
+
+length(which(gapminder.no$continent == "Oceania")) # How many Oceania rows are there now?
+levels(gapminder.no$continent) # But how many factor levels?
+
+```
+
+There are still 5 factor levels even though Oceania has been removed.
+```{r}
+ gapminder.no$continent <-  gapminder.no$continent %>% 
+                              fct_drop()
+levels(gapminder.no$continent) # Now how many factor levels?
+```
+
+Now there are the correct number of factor levels.
+
+I will now **reorder the levels of continent** based on the median per capita GDP within each country, in descending order.
+```{r}
+gapminder.no$continent <- fct_reorder(gapminder.no$continent, gapminder.no$gdpPercap, median, .desc = TRUE)
+levels(gapminder.no$continent) 
+```
+
+This reorded the factor levels, but let's see if the order of the data has changed:
+```{r}
+head(gapminder) # orginal data
+head(gapminder.no) # reordered factor data
+tail(gapminder) # orginal data
+tail(gapminder.no) # reordered factor data
+```
+
+Nope! Both the orginal dataframe and the dataframe with the reorded factor levels start with Asian and end with Africa.
+
+How does this differ from **arrange**?
+```{r}
+gapminder.noa <- gapminder.no %>%
+                    group_by(continent) %>%
+                      mutate(med.gdp = median(gdpPercap)) %>%
+                       arrange(desc(med.gdp))
+
+head(gapminder.noa)
+tail(gapminder.noa)
+levels(gapminder.noa$continent)
+```
+With arrange the order of the data changes, and the continents are listed in the same order as the factor levels with fct_reorder() (starts with Europe ends with Africa), but the order of the factor levels do not change. 
+
+Let's see whether the order of the data or the order of the factors dictate how this data is plotted. 
+```{r}
+ggplot(gapminder.noa, aes(x=continent, y=gdpPercap)) + 
+      geom_boxplot() +
+        theme_bw() + xlab("Continent") + ylab("Per Capita GDP")
+```
+Looks like it's the order of the factor levels that dictate plotting order. So if I wanted the same plot but in order of decreasing median GDP, I could use the dataframe I applied fct_reorder to.
+```{r}
+ggplot(gapminder.no, aes(x=continent, y=gdpPercap)) + 
+      geom_boxplot() +
+        theme_bw() + xlab("Continent") + ylab("Per Capita GDP")
+```
+
+Nice! :star:
+
+## File I/O
+
+I'll go back to using the original gapminder data and fiddle with factor levels so they start with Asia, then Europe and after that I don't care about the order.
+```{r}
+gapminder$continent<- gapminder$continent %>% fct_relevel("Asia", "Europe")
+levels(gapminder$continent)
+```
+
+Now I'll summarize the difference between the richest and poorest country in each continent over time.
+```{r}
+gapminder.range <-  gapminder %>% 
+                      group_by(continent, year) %>%
+                         summarise(rich.range = max(gdpPercap) - min(gdpPercap))
+head(gapminder.range)
+tail(gapminder.range)
+```
+
+As you can see, the data is order according the factor order for continent that I specified (starts with Asia, ends with Oceania.
+
+Now, I'll export this data, but I want to preserve my hard-earned factor order.
+```{r}
+getwd() # where is this going to save to?
+saveRDS(gapminder.range, "gapminder.range.rds")
+```
+
+The .rds file is now in my hw05-Factors folder. Now I'll read it back in, I'm going to call it something different so that I can compare the original dataframe and the outputed/inputed one.
+```{r}
+gapminder.range.in <- readRDS("gapminder.range.rds")
+```
+
+It's back! :boom: But were my factor levels preserved?
+```{r}
+levels(gapminder.range$continent)
+levels(gapminder.range.in$continent)
+```
+
+Yup! :punch:
+
+## Visualization design
