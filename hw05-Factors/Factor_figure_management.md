@@ -315,4 +315,4 @@ I think this plot is much better. I'll export it. (Note to reviewers: the labels
 ggsave(p, file="GDP_Americas.png", width=4, height=3, scale=1.5, dpi=300)
 ```
 
-Here's the exported file, supersized, high res, and linked back into this document: ![Alt text](/Users/katejohnson/Google%20Drive/Classes/STAT%20545.547/STAT545-hw-Johnson-Kate/STAT545-hw-Johnson-Kate_Oct5/hw05-Factors/GDP_Americas.png)
+Here's the exported file, supersized, high res, and linked back into this document: ![](GDP_Americas.png)
