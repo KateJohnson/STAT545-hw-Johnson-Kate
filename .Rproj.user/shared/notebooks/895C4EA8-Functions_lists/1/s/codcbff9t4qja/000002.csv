@@ -1,0 +1,21 @@
+"0","lm(lifeExp ~ I(year-1952), gapminder)
+"
+"1","
+Call:
+"
+"1","lm(formula = lifeExp ~ I(year - 1952), data = gapminder)"
+"1","
+
+"
+"1","Coefficients:
+"
+"1","   (Intercept)  "
+"1","I(year - 1952)  "
+"1","
+"
+"1","       50.5121  "
+"1","        0.3259  "
+"1","
+"
+"1","
+"

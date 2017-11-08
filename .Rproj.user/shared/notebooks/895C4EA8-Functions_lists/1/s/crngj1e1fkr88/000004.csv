@@ -1,0 +1,12 @@
+"0","gapminder %>%
+  filter(country==""France"") %>%
+      lm_fit()
+"
+"1","     (Intercept) "
+"1","I(year - offset) "
+"1","
+"
+"1","      67.7901282 "
+"1","       0.2385014 "
+"1","
+"
