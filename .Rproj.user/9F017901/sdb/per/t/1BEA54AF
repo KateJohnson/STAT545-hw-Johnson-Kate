@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Factor and Figure Management\"\noutput: github_document\nkeep.md: TRUE\n---\n\nI will use the Gapminder data set for this assignment\n\n```{r}\nsuppressPackageStartupMessages(library(gapminder))\nsuppressPackageStartupMessages(library(tidyverse))\nsuppressPackageStartupMessages(library(forcats))\n```\n\n\n## Factor Management\n\nFirst, let's look at the data structure. \n```{r}\nstr(gapminder)\n```\n\nContinent is a factor.\n```{r}\nlevels(gapminder$continent)\n```\n\nIt has 5 levels for each continent. \n\nI'd like to **Drop Oceania** from the data frame and ensure that factor level is removed as well. \n```{r}\nlength(which(gapminder$continent == \"Oceania\")) # How many Oceania rows are there?\n\ngapminder.no <- gapminder %>% \n                  filter(continent != \"Oceania\") \n\nlength(which(gapminder.no$continent == \"Oceania\")) # How many Oceania rows are there now?\nlevels(gapminder.no$continent) # But how many factor levels?\n\n```\n\nThere are still 5 factor levels even though Oceania has been removed.\n```{r}\n gapminder.no$continent %>% \n      fct_drop() %>%\n        levels()\n\n```\n\nNow there are the correct number of factor levels.\n\nI will now **reorder the levels of continent** based on the minimum per capita GDP within each country, in descending order.\n```{r}\nfct_reorder(gapminder.no$continent, gapminder.no$gdpPercap, min, .desc = TRUE) %>%\n          levels() \n```\n\nExplore the effects of **arrange**\n\n",
+    "created" : 1508440026879.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2198453703",
+    "id" : "1BEA54AF",
+    "lastKnownWriteTime" : 1508442578,
+    "last_content_update" : 1508442578447,
+    "path" : "C:/Users/katemj91/Google Drive/Classes/STAT 545.547/STAT545-hw-Johnson-Kate/STAT545-hw-Johnson-Kate_Oct5/hw05-Factors/Factor_figure_management.Rmd",
+    "project_path" : "hw05-Factors/Factor_figure_management.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Writing functions and working with lists\"\noutput: html_document\n---\n",
+    "created" : 1510110386322.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2440893966",
+    "id" : "E46F5C35",
+    "lastKnownWriteTime" : 1510110533,
+    "last_content_update" : 1510110533229,
+    "path" : "~/Google Drive/Classes/STAT 545.547/STAT545-hw-Johnson-Kate/STAT545-hw-Johnson-Kate_Oct5/hw06-Functions_lists/Functions_lists.Rmd",
+    "project_path" : "hw06-Functions_lists/Functions_lists.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
