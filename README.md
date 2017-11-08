@@ -13,4 +13,4 @@ This is my STAT 545 Homework Repository
 
 - Assignment 5 **Factor and figure management** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw05-Factors/Factor_figure_management.md)
 
-- Assignment 5 **Functions and nested dataframes** is [here]()
+- Assignment 6 **Functions and nested dataframes** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw06-Functions_lists/Functions_lists.md)
