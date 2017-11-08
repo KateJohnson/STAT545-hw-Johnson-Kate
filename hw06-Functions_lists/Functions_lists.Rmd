@@ -5,7 +5,7 @@ keep_md: true
 always_allow_html: yes
 ---
 
-##2. Writing Functions
+## 2. Writing Functions
 
 I'll stick with gapminder for this exercise.
 
@@ -111,7 +111,10 @@ Looks like it's a list of all the normal gapminder data, including life expectan
 listviewer::jsonedit(gap_nested$country, mode = "view")
 ```
 
+
 Using listviewer, it looks like France is in the 44th position, but when I ran my lm_fit function below I was getting slightly different coefficients that when I used lm_fit on the unnested gapminder dataset (piped to only include France) a shown above. However, the coefficients are identifical when I run lm_fit on the dataframe in the 45th postion of the 'data' list, so that must be where it is. 
+
+*Note: I can only knit the markdown file if I allow it to produce the listviewer output in html format. The html code is nonsensical and doesn't show the reader what I'm able to see. Any suggestions?*
 
 ```{r}
 map(gap_nested$data[45], lm_fit)
@@ -125,6 +128,8 @@ This difference is probably because the first country (Afghanistan) is listed as
 ```
 
 But carrying on, mapping my linear regression function to one country in the data list does seem to be working. I'll try doing it with all countries and add the coefficients as another list in the gap_nested datframe.
+
+**1. A linear model**
 
 ```{r}
 gap_nested <- gap_nested %>% 
@@ -155,3 +160,5 @@ kable(head(gap_coefs))
 ```
 
 Cool:punch: Now, I can fit coefficients for other models and **compare the output**.  
+
+**2. A quadratic model**
