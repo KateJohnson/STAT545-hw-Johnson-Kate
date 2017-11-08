@@ -1,10 +1,10 @@
 ---
-title: "Writing functions and working with lists"
+title: "Writing functions and working with nested dataframes"
 output: github_document 
 keep_md: true 
 ---
 
-## 2. Writing Functions
+##2. Writing Functions
 
 I'll stick with gapminder for this exercise.
 
