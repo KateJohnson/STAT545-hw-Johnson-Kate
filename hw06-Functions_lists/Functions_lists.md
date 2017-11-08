@@ -2,7 +2,7 @@ Writing functions and working with nested dataframes
 ================
 
 2. Writing Functions
---------------------
+====================
 
 I'll stick with gapminder for this exercise.
 
@@ -115,7 +115,7 @@ This method produces very similar coefficients as the linear model, but robust r
 Now I want to apply these functions to nested dataframes consisting of the countries in gapminder.
 
 6. Working with nested dataframes
----------------------------------
+=================================
 
 First, I will **nest the data by continent and country**
 
@@ -165,7 +165,7 @@ listviewer::jsonedit(gap_nested$country, mode = "view")
 
 <!--html_preserve-->
 
-<script type="application/json" data-for="htmlwidget-00034dc1892ac1140c3e">{"x":{"data":["Afghanistan","Albania","Algeria","Angola","Argentina","Australia","Austria","Bahrain","Bangladesh","Belgium","Benin","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo, Dem. Rep.","Congo, Rep.","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Czech Republic","Denmark","Djibouti","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Ethiopia","Finland","France","Gabon","Gambia","Germany","Ghana","Greece","Guatemala","Guinea","Guinea-Bissau","Haiti","Honduras","Hong Kong, China","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kenya","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Lesotho","Liberia","Libya","Madagascar","Malawi","Malaysia","Mali","Mauritania","Mauritius","Mexico","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Reunion","Romania","Rwanda","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Sierra Leone","Singapore","Slovak Republic","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tanzania","Thailand","Togo","Trinidad and Tobago","Tunisia","Turkey","Uganda","United Kingdom","United States","Uruguay","Venezuela","Vietnam","West Bank and Gaza","Yemen, Rep.","Zambia","Zimbabwe"],"options":{"mode":"view","modes":["code","form","text","tree","view"]}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-ab7ab570492fc1f411fb">{"x":{"data":["Afghanistan","Albania","Algeria","Angola","Argentina","Australia","Austria","Bahrain","Bangladesh","Belgium","Benin","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo, Dem. Rep.","Congo, Rep.","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Czech Republic","Denmark","Djibouti","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Ethiopia","Finland","France","Gabon","Gambia","Germany","Ghana","Greece","Guatemala","Guinea","Guinea-Bissau","Haiti","Honduras","Hong Kong, China","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kenya","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Lesotho","Liberia","Libya","Madagascar","Malawi","Malaysia","Mali","Mauritania","Mauritius","Mexico","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Reunion","Romania","Rwanda","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Sierra Leone","Singapore","Slovak Republic","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tanzania","Thailand","Togo","Trinidad and Tobago","Tunisia","Turkey","Uganda","United Kingdom","United States","Uruguay","Venezuela","Vietnam","West Bank and Gaza","Yemen, Rep.","Zambia","Zimbabwe"],"options":{"mode":"view","modes":["code","form","text","tree","view"]}},"evals":[],"jsHooks":[]}</script>
 <!--/html_preserve-->
 Using listviewer, it looks like France is in the 44th position, but when I ran my lm\_fit function below I was getting slightly different coefficients that when I used lm\_fit on the unnested gapminder dataset (piped to only include France) a shown above. However, the coefficients are identifical when I run lm\_fit on the dataframe in the 45th postion of the 'data' list, so that must be where it is.
 
@@ -260,21 +260,9 @@ head(gap_nested)
 **3. A robust regression model**
 
 ``` r
-gap_nested <- gap_nested %>% 
+suppressWarnings(gap_nested <- gap_nested %>% 
                  mutate(fit.rm = map(data, robust_fit),
-                   tidy.rm = map(fit.rm, tidy))
-```
-
-    ## Warning in rlm.default(x, y, weights, method = method, wt.method =
-    ## wt.method, : 'rlm' failed to converge in 20 steps
-
-    ## Warning in rlm.default(x, y, weights, method = method, wt.method =
-    ## wt.method, : 'rlm' failed to converge in 20 steps
-
-    ## Warning in rlm.default(x, y, weights, method = method, wt.method =
-    ## wt.method, : 'rlm' failed to converge in 20 steps
-
-``` r
+                   tidy.rm = map(fit.rm, tidy)))
 head(gap_nested)
 ```
 

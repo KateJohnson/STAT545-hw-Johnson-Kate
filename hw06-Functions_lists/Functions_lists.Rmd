@@ -5,7 +5,8 @@ keep_md: true
 always_allow_html: yes
 ---
 
-## 2. Writing Functions
+
+# 2. Writing Functions
 
 I'll stick with gapminder for this exercise.
 
@@ -88,7 +89,8 @@ This method produces very similar coefficients as the linear model, but robust r
 
 Now I want to apply these functions to nested dataframes consisting of the countries in gapminder.
 
-## 6. Working with nested dataframes
+
+# 6. Working with nested dataframes
 
 First, I will **nest the data by continent and country** 
 
@@ -174,9 +176,9 @@ head(gap_nested)
 **3. A robust regression model**
 
 ```{r}
-gap_nested <- gap_nested %>% 
+suppressWarnings(gap_nested <- gap_nested %>% 
                  mutate(fit.rm = map(data, robust_fit),
-                   tidy.rm = map(fit.rm, tidy))
+                   tidy.rm = map(fit.rm, tidy)))
 head(gap_nested)
 ```
 
