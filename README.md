@@ -12,3 +12,5 @@ This is my STAT 545 Homework Repository
 - Assignment 4 **Tidy data and joins** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw04-Merges_joins/Gapminder_merges_joins.md)
 
 - Assignment 5 **Factor and figure management** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw05-Factors/Factor_figure_management.md)
+
+- Assignment 5 **Functions and nested dataframes** is [here]()
