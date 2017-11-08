@@ -1,5 +1,8 @@
-"0","robust_fit(gapminder)
-"
+"0","robust_fit <- function(mydata, offset=1952, method=""M"") {"
+"0","  the_robust <- MASS::rlm(lifeExp ~ I(year-offset), method=method, data=mydata)"
+"0","    coef(the_robust)"
+"0","}"
+"0","robust_fit(gapminder)"
 "1","     (Intercept) "
 "1","I(year - offset) "
 "1","

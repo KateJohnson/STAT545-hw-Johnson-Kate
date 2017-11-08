@@ -1,5 +1,4 @@
-"0","lm(lifeExp ~ I(year-1952), gapminder)
-"
+"0","lm(lifeExp ~ I(year-1952), gapminder)"
 "1","
 Call:
 "

@@ -2,6 +2,7 @@
 title: "Writing functions and working with nested dataframes"
 output: github_document 
 keep_md: true 
+always_allow_html: yes
 ---
 
 ##2. Writing Functions
@@ -10,6 +11,9 @@ I'll stick with gapminder for this exercise.
 
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(MASS))
+library(listviewer)
+library(broom)
 library(knitr)
 library(gapminder)
 ```
@@ -22,7 +26,7 @@ kable(head(gapminder))
 
 **1. A linear model**
 
-I will write a basic function to fit a linear model for the relationship between life expectancy and year. As suggested by Jenny in her [tutorial](http://stat545.com/block012_function-regress-lifeexp-on-year.html), it's definitely a good idea to force the intercept to start at the first year in the gapminder data (1952) not the first year ever (0)!  
+I will write a basic function to fit a linear model for the relationship between life expectancy and year. As suggested by Jenny in her [tutorial](http://stat545.com/block012_function-regress-lifeexp-on-year.html), I will force the intercept to start at the first year in the gapminder data (1952) not the first year ever (0) using an offset.  
 
 ```{r}
 lm_fit <- function(mydata, offset=1952) {
@@ -71,8 +75,6 @@ quad_fit(gapminder)
 **2. A robust regression model**
 
 ```{r}
-suppressPackageStartupMessages(library(MASS))
-
 robust_fit <- function(mydata, offset=1952, method="M") {
   the_robust <- MASS::rlm(lifeExp ~ I(year-offset), method=method, data=mydata)
     coef(the_robust)
@@ -86,3 +88,70 @@ This method produces very similar coefficients as the linear model, but robust r
 Now I want to apply these functions to nested dataframes consisting of the countries in gapminder.
 
 ## 6. Working with nested dataframes
+
+First, I will **nest the data by continent and country** 
+
+```{r}
+gap_nested <- gapminder %>% 
+   group_by(continent, country) %>% 
+   nest()
+
+kable(head(gap_nested))
+```
+
+That 'data' column looks pretty crazy, let's see what's in the first position of the data column. 
+
+```{r}
+kable(gap_nested[[1, "data"]])
+```
+
+Looks like it's a list of all the normal gapminder data, including life expectancy and year. This is going to make it a lot easier to **run my functions on the trend in life expectancy for each country**. I'll try that now, but just for France. First I need to see the position of France in gap_nested.
+
+```{r}
+listviewer::jsonedit(gap_nested$country, mode = "view")
+```
+
+Using listviewer, it looks like France is in the 44th position, but when I ran my lm_fit function below I was getting slightly different coefficients that when I used lm_fit on the unnested gapminder dataset (piped to only include France) a shown above. However, the coefficients are identifical when I run lm_fit on the dataframe in the 45th postion of the 'data' list, so that must be where it is. 
+
+```{r}
+map(gap_nested$data[45], lm_fit)
+```
+
+This difference is probably because the first country (Afghanistan) is listed as row 0 in listviewer, and row 1 in the dataframe. But this really isn't an ideal way to find France's position so I also played around with str() and map() to try and find France by name (see code below). I was looking at Jenny's purrr [tutorial](https://jennybc.github.io/purrr-tutorial/ls02_map-extraction-advanced.html) but couldn't find the solution. There doesn't appear to be anything in the data list that identifies country by name, only by it's position in the gap_nested dataframe. Please help!  
+
+```{r}
+# str(gap_nested, max.level=1, list.length=1)
+# map(gap_nested$data, "France")
+```
+
+But carrying on, mapping my linear regression function to one country in the data list does seem to be working. I'll try doing it with all countries and add the coefficients as another list in the gap_nested datframe.
+
+```{r}
+gap_nested <- gap_nested %>% 
+   mutate(fit = map(data, lm_fit))
+
+gap_nested$fit[[45]]
+```
+
+Great, it looks like I still get the same answer for France when I run the lm_fit function on every country in gap_nested.
+But now I'd like to **tidy up** the lm output using the broom package. 
+
+```{r}
+gap_nested <- gap_nested %>% 
+  mutate(tidy = map(fit, tidy))
+
+gap_nested$tidy[[45]]
+```
+
+Same output for France, but now the coefficients are in a dataframe. Now I'll **unnest** the dataframe and keep the coefficients for each country.  
+
+```{r}
+gap_coefs <- gap_nested %>% 
+   dplyr::select(continent, country, tidy) %>% 
+   unnest(tidy)  %>%
+    rename(parameter=names, coefficient=x)
+
+kable(head(gap_coefs))
+```
+
+Cool:punch: Now, I can fit coefficients for other models and **compare the output**.  
