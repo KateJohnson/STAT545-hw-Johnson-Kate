@@ -1,5 +1,4 @@
-"0","lm_fit(gapminder)
-"
+"0","lm_fit(gapminder)"
 "1","     (Intercept) "
 "1","I(year - offset) "
 "1","

@@ -15,6 +15,7 @@ suppressPackageStartupMessages(library(MASS))
 library(listviewer)
 library(broom)
 library(knitr)
+suppressPackageStartupMessages(library(reshape2))
 library(gapminder)
 ```
 
@@ -72,7 +73,7 @@ quad_fit <- function(mydata, offset=1952) {
 quad_fit(gapminder)
 ```
 
-**2. A robust regression model**
+**3. A robust regression model**
 
 ```{r}
 robust_fit <- function(mydata, offset=1952, method="M") {
@@ -133,9 +134,9 @@ But carrying on, mapping my linear regression function to one country in the dat
 
 ```{r}
 gap_nested <- gap_nested %>% 
-   mutate(fit = map(data, lm_fit))
+   mutate(fit.lm = map(data, lm_fit))
 
-gap_nested$fit[[45]]
+gap_nested$fit.lm[[45]]
 ```
 
 Great, it looks like I still get the same answer for France when I run the lm_fit function on every country in gap_nested.
@@ -143,22 +144,94 @@ But now I'd like to **tidy up** the lm output using the broom package.
 
 ```{r}
 gap_nested <- gap_nested %>% 
-  mutate(tidy = map(fit, tidy))
+  mutate(tidy.lm = map(fit.lm, tidy))
 
-gap_nested$tidy[[45]]
+gap_nested$tidy.lm[[45]]
 ```
 
-Same output for France, but now the coefficients are in a dataframe. Now I'll **unnest** the dataframe and keep the coefficients for each country.  
+Same output for France, but now the coefficients are in a dataframe. Now I'll **unnest** the dataframe and keep the coefficients for each country as a proof of principle.  
 
 ```{r}
 gap_coefs <- gap_nested %>% 
-   dplyr::select(continent, country, tidy) %>% 
-   unnest(tidy)  %>%
-    rename(parameter=names, coefficient=x)
+   dplyr::select(continent, country, tidy.lm) %>% 
+   unnest(tidy.lm)  %>%
+    dplyr::rename(parameter=names, coefficient.lm=x)
 
 kable(head(gap_coefs))
 ```
 
-Cool:punch: Now, I can fit coefficients for other models and **compare the output**.  
+Cool:punch: Now, I can fit coefficients for other models and **compare the output**. I'll go back to working with the nested dataframe in order to add the fitted and tidy coefficients for the other models, and then I'll unnest again at the very end.  
 
 **2. A quadratic model**
+
+```{r}
+gap_nested <- gap_nested %>% 
+                 mutate(fit.qm = map(data, quad_fit),
+                   tidy.qm = map(fit.qm, tidy))
+head(gap_nested)
+```
+
+**3. A robust regression model**
+
+```{r}
+gap_nested <- gap_nested %>% 
+                 mutate(fit.rm = map(data, robust_fit),
+                   tidy.rm = map(fit.rm, tidy))
+head(gap_nested)
+```
+
+Now I can do the final **unnesting**. But I'm going to need to do it in two parts because the linear and robust models have 2 parameters, but the quadratic model has 3 parameters, so I won't be able to put them all in the same unnested dataframe without some re-jigging.
+
+First, I'll unnest the linear and robust model parameters.
+
+```{r}
+(gap_nested_lm_rm <-  gap_nested %>%
+                        dplyr::select(continent, country, tidy.lm, tidy.qm, tidy.rm) %>% 
+                          unnest(tidy.lm, tidy.rm) %>%
+                             dplyr::select(-names1) %>%
+                                dplyr::rename(parameter=names, coefficient.lm=x, coefficient.rm=x1))
+```
+
+Now I'll unnest the quadratic model.
+
+```{r}
+ (gap_nested_qm <- gap_nested %>%
+                    dplyr::select(continent, country, tidy.qm) %>% 
+                       unnest(tidy.qm) %>%
+                         dplyr::rename(parameter=names, coefficient.qm=x))
+```
+
+Now I will used a **full join** to merge the dataframes while retaining three parameters for each country.
+
+```{r}
+gap_full_coeff <- left_join(gap_nested_qm, gap_nested_lm_rm)
+kable(head(gap_full_coeff))
+```
+
+Got it:smile: Finally, I will **visualize the differences** in the year coefficient for countries. I'll need to reshape and rearrange the data to do that. I'm not going to be able to fit all 142 countries on the same graph, so I'll just look at the first 7 for exploration purposes.
+
+```{r}
+gap_year_coeff <- gap_full_coeff %>% 
+                    filter(parameter=="I(year - offset)") 
+
+gap_year_coeff_melt <- melt(gap_year_coeff, id=c("continent","country","parameter"))
+gap_year_coeff_melt <- arrange(gap_year_coeff_melt, country)
+head(gap_year_coeff_melt)
+
+ggplot(gap_year_coeff_melt[1:21,], aes(x=country, y=value, fill=variable)) + 
+      geom_bar(position="dodge", stat="identity") +
+        ylab("Year parameter value") + xlab("Country") +
+          scale_fill_discrete(name="", labels=c("Quadratic model","Linear model","Robust model")) + 
+          theme_bw()
+```
+
+I can see that the coefficients for the year parameter are quite similar for the linear and robust models, and quite different for the quadratic model, just as I'd expect. Unfortunately I'm out of time, but there are a few obvious **next steps** that I'd like to do in the future:
+
+  - Write a function to find the differences in the year coefficients between the quadratic model and the average of the linear and robust models. This would give me an idea of the countries in which there is probably a non-linear term because the squared year term is really affecting the model parameters. 
+  - Write a function to calculate the difference between the year coefficients for the linear and robust models for each country. This would give me an idea of which countries have outliers, as these models tend to diverge in the presence of outliers. I would go back to the nested dataframe to run both of these functions.
+  - Extract the standard errors and p-values for each of the models to compare them. I think the broom package would make it relatively easy to do this. 
+  - *Any other suggestions?*
+
+**Final thoughts**
+
+I found that there was quite a bit of overhead in nesting the data, and I still find those lists very unwieldy, but once it was in the correct format it was very easy to map the functions to the dataframe for each country. I think I just need to find a better system for viewing the components of lists. In the past I've use 'dlply' and some pretty complicated 'for' loops to accomplish these tasks, and I *think* this is easier, although maybe less intuitive.

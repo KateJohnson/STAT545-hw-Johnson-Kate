@@ -12,6 +12,7 @@ suppressPackageStartupMessages(library(MASS))
 library(listviewer)
 library(broom)
 library(knitr)
+suppressPackageStartupMessages(library(reshape2))
 library(gapminder)
 ```
 
@@ -95,7 +96,7 @@ quad_fit(gapminder)
     ##          (Intercept)     I(year - offset) I((year - offset)^2) 
     ##         48.916137600          0.517417408         -0.003482065
 
-**2. A robust regression model**
+**3. A robust regression model**
 
 ``` r
 robust_fit <- function(mydata, offset=1952, method="M") {
@@ -164,9 +165,11 @@ listviewer::jsonedit(gap_nested$country, mode = "view")
 
 <!--html_preserve-->
 
-<script type="application/json" data-for="htmlwidget-2c82271c23eb927a49c4">{"x":{"data":["Afghanistan","Albania","Algeria","Angola","Argentina","Australia","Austria","Bahrain","Bangladesh","Belgium","Benin","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo, Dem. Rep.","Congo, Rep.","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Czech Republic","Denmark","Djibouti","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Ethiopia","Finland","France","Gabon","Gambia","Germany","Ghana","Greece","Guatemala","Guinea","Guinea-Bissau","Haiti","Honduras","Hong Kong, China","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kenya","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Lesotho","Liberia","Libya","Madagascar","Malawi","Malaysia","Mali","Mauritania","Mauritius","Mexico","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Reunion","Romania","Rwanda","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Sierra Leone","Singapore","Slovak Republic","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tanzania","Thailand","Togo","Trinidad and Tobago","Tunisia","Turkey","Uganda","United Kingdom","United States","Uruguay","Venezuela","Vietnam","West Bank and Gaza","Yemen, Rep.","Zambia","Zimbabwe"],"options":{"mode":"view","modes":["code","form","text","tree","view"]}},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-00034dc1892ac1140c3e">{"x":{"data":["Afghanistan","Albania","Algeria","Angola","Argentina","Australia","Austria","Bahrain","Bangladesh","Belgium","Benin","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo, Dem. Rep.","Congo, Rep.","Costa Rica","Cote d'Ivoire","Croatia","Cuba","Czech Republic","Denmark","Djibouti","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Ethiopia","Finland","France","Gabon","Gambia","Germany","Ghana","Greece","Guatemala","Guinea","Guinea-Bissau","Haiti","Honduras","Hong Kong, China","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kenya","Korea, Dem. Rep.","Korea, Rep.","Kuwait","Lebanon","Lesotho","Liberia","Libya","Madagascar","Malawi","Malaysia","Mali","Mauritania","Mauritius","Mexico","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru","Philippines","Poland","Portugal","Puerto Rico","Reunion","Romania","Rwanda","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Sierra Leone","Singapore","Slovak Republic","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan","Swaziland","Sweden","Switzerland","Syria","Taiwan","Tanzania","Thailand","Togo","Trinidad and Tobago","Tunisia","Turkey","Uganda","United Kingdom","United States","Uruguay","Venezuela","Vietnam","West Bank and Gaza","Yemen, Rep.","Zambia","Zimbabwe"],"options":{"mode":"view","modes":["code","form","text","tree","view"]}},"evals":[],"jsHooks":[]}</script>
 <!--/html_preserve-->
 Using listviewer, it looks like France is in the 44th position, but when I ran my lm\_fit function below I was getting slightly different coefficients that when I used lm\_fit on the unnested gapminder dataset (piped to only include France) a shown above. However, the coefficients are identifical when I run lm\_fit on the dataframe in the 45th postion of the 'data' list, so that must be where it is.
+
+*Note: I can only knit the markdown file if I allow it to produce the listviewer output in html format. The html code is nonsensical and doesn't show the reader what I'm able to see. Any suggestions?*
 
 ``` r
 map(gap_nested$data[45], lm_fit)
@@ -185,11 +188,13 @@ This difference is probably because the first country (Afghanistan) is listed as
 
 But carrying on, mapping my linear regression function to one country in the data list does seem to be working. I'll try doing it with all countries and add the coefficients as another list in the gap\_nested datframe.
 
+**1. A linear model**
+
 ``` r
 gap_nested <- gap_nested %>% 
-   mutate(fit = map(data, lm_fit))
+   mutate(fit.lm = map(data, lm_fit))
 
-gap_nested$fit[[45]]
+gap_nested$fit.lm[[45]]
 ```
 
     ##      (Intercept) I(year - offset) 
@@ -199,9 +204,9 @@ Great, it looks like I still get the same answer for France when I run the lm\_f
 
 ``` r
 gap_nested <- gap_nested %>% 
-  mutate(tidy = map(fit, tidy))
+  mutate(tidy.lm = map(fit.lm, tidy))
 
-gap_nested$tidy[[45]]
+gap_nested$tidy.lm[[45]]
 ```
 
     ## # A tibble: 2 x 2
@@ -210,24 +215,189 @@ gap_nested$tidy[[45]]
     ## 1      (Intercept) 67.7901282
     ## 2 I(year - offset)  0.2385014
 
-Same output for France, but now the coefficients are in a dataframe. Now I'll **unnest** the dataframe and keep the coefficients for each country.
+Same output for France, but now the coefficients are in a dataframe. Now I'll **unnest** the dataframe and keep the coefficients for each country as a proof of principle.
 
 ``` r
 gap_coefs <- gap_nested %>% 
-   dplyr::select(continent, country, tidy) %>% 
-   unnest(tidy)  %>%
-    rename(parameter=names, coefficient=x)
+   dplyr::select(continent, country, tidy.lm) %>% 
+   unnest(tidy.lm)  %>%
+    dplyr::rename(parameter=names, coefficient.lm=x)
 
 kable(head(gap_coefs))
 ```
 
-| continent | country     | parameter        |  coefficient|
-|:----------|:------------|:-----------------|------------:|
-| Asia      | Afghanistan | (Intercept)      |   29.9072949|
-| Asia      | Afghanistan | I(year - offset) |    0.2753287|
-| Europe    | Albania     | (Intercept)      |   59.2291282|
-| Europe    | Albania     | I(year - offset) |    0.3346832|
-| Africa    | Algeria     | (Intercept)      |   43.3749744|
-| Africa    | Algeria     | I(year - offset) |    0.5692797|
+| continent | country     | parameter        |  coefficient.lm|
+|:----------|:------------|:-----------------|---------------:|
+| Asia      | Afghanistan | (Intercept)      |      29.9072949|
+| Asia      | Afghanistan | I(year - offset) |       0.2753287|
+| Europe    | Albania     | (Intercept)      |      59.2291282|
+| Europe    | Albania     | I(year - offset) |       0.3346832|
+| Africa    | Algeria     | (Intercept)      |      43.3749744|
+| Africa    | Algeria     | I(year - offset) |       0.5692797|
 
-Cool:punch: Now, I can fit coefficients for other models and **compare the output**.
+Cool:punch: Now, I can fit coefficients for other models and **compare the output**. I'll go back to working with the nested dataframe in order to add the fitted and tidy coefficients for the other models, and then I'll unnest again at the very end.
+
+**2. A quadratic model**
+
+``` r
+gap_nested <- gap_nested %>% 
+                 mutate(fit.qm = map(data, quad_fit),
+                   tidy.qm = map(fit.qm, tidy))
+head(gap_nested)
+```
+
+    ## # A tibble: 6 x 7
+    ##   continent     country              data    fit.lm          tidy.lm
+    ##      <fctr>      <fctr>            <list>    <list>           <list>
+    ## 1      Asia Afghanistan <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 2    Europe     Albania <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 3    Africa     Algeria <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 4    Africa      Angola <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 5  Americas   Argentina <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 6   Oceania   Australia <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## # ... with 2 more variables: fit.qm <list>, tidy.qm <list>
+
+**3. A robust regression model**
+
+``` r
+gap_nested <- gap_nested %>% 
+                 mutate(fit.rm = map(data, robust_fit),
+                   tidy.rm = map(fit.rm, tidy))
+```
+
+    ## Warning in rlm.default(x, y, weights, method = method, wt.method =
+    ## wt.method, : 'rlm' failed to converge in 20 steps
+
+    ## Warning in rlm.default(x, y, weights, method = method, wt.method =
+    ## wt.method, : 'rlm' failed to converge in 20 steps
+
+    ## Warning in rlm.default(x, y, weights, method = method, wt.method =
+    ## wt.method, : 'rlm' failed to converge in 20 steps
+
+``` r
+head(gap_nested)
+```
+
+    ## # A tibble: 6 x 9
+    ##   continent     country              data    fit.lm          tidy.lm
+    ##      <fctr>      <fctr>            <list>    <list>           <list>
+    ## 1      Asia Afghanistan <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 2    Europe     Albania <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 3    Africa     Algeria <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 4    Africa      Angola <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 5  Americas   Argentina <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## 6   Oceania   Australia <tibble [12 x 4]> <dbl [2]> <tibble [2 x 2]>
+    ## # ... with 4 more variables: fit.qm <list>, tidy.qm <list>, fit.rm <list>,
+    ## #   tidy.rm <list>
+
+Now I can do the final **unnesting**. But I'm going to need to do it in two parts because the linear and robust models have 2 parameters, but the quadratic model has 3 parameters, so I won't be able to put them all in the same unnested dataframe without some re-jigging.
+
+First, I'll unnest the linear and robust model parameters.
+
+``` r
+(gap_nested_lm_rm <-  gap_nested %>%
+                        dplyr::select(continent, country, tidy.lm, tidy.qm, tidy.rm) %>% 
+                          unnest(tidy.lm, tidy.rm) %>%
+                             dplyr::select(-names1) %>%
+                                dplyr::rename(parameter=names, coefficient.lm=x, coefficient.rm=x1))
+```
+
+    ## # A tibble: 284 x 5
+    ##    continent     country        parameter coefficient.lm coefficient.rm
+    ##       <fctr>      <fctr>            <chr>          <dbl>          <dbl>
+    ##  1      Asia Afghanistan      (Intercept)     29.9072949     29.9072949
+    ##  2      Asia Afghanistan I(year - offset)      0.2753287      0.2753287
+    ##  3    Europe     Albania      (Intercept)     59.2291282     59.9416820
+    ##  4    Europe     Albania I(year - offset)      0.3346832      0.3160949
+    ##  5    Africa     Algeria      (Intercept)     43.3749744     43.1580026
+    ##  6    Africa     Algeria I(year - offset)      0.5692797      0.5758313
+    ##  7    Africa      Angola      (Intercept)     32.1266538     32.1349259
+    ##  8    Africa      Angola I(year - offset)      0.2093399      0.2090313
+    ##  9  Americas   Argentina      (Intercept)     62.6884359     62.6550784
+    ## 10  Americas   Argentina I(year - offset)      0.2317084      0.2327136
+    ## # ... with 274 more rows
+
+Now I'll unnest the quadratic model.
+
+``` r
+ (gap_nested_qm <- gap_nested %>%
+                    dplyr::select(continent, country, tidy.qm) %>% 
+                       unnest(tidy.qm) %>%
+                         dplyr::rename(parameter=names, coefficient.qm=x))
+```
+
+    ## # A tibble: 426 x 4
+    ##    continent     country            parameter coefficient.qm
+    ##       <fctr>      <fctr>                <chr>          <dbl>
+    ##  1      Asia Afghanistan          (Intercept)   28.178686813
+    ##  2      Asia Afghanistan     I(year - offset)    0.482761638
+    ##  3      Asia Afghanistan I((year - offset)^2)   -0.003771508
+    ##  4    Europe     Albania          (Intercept)   56.853134615
+    ##  5    Europe     Albania     I(year - offset)    0.619802448
+    ##  6    Europe     Albania I((year - offset)^2)   -0.005183986
+    ##  7    Africa     Algeria          (Intercept)   41.942236264
+    ##  8    Africa     Algeria     I(year - offset)    0.741208292
+    ##  9    Africa     Algeria I((year - offset)^2)   -0.003125974
+    ## 10    Africa      Angola          (Intercept)   30.117670330
+    ## # ... with 416 more rows
+
+Now I will used a **full join** to merge the dataframes while retaining three parameters for each country.
+
+``` r
+gap_full_coeff <- left_join(gap_nested_qm, gap_nested_lm_rm)
+```
+
+    ## Joining, by = c("continent", "country", "parameter")
+
+``` r
+kable(head(gap_full_coeff))
+```
+
+| continent | country     | parameter            |  coefficient.qm|  coefficient.lm|  coefficient.rm|
+|:----------|:------------|:---------------------|---------------:|---------------:|---------------:|
+| Asia      | Afghanistan | (Intercept)          |      28.1786868|      29.9072949|      29.9072949|
+| Asia      | Afghanistan | I(year - offset)     |       0.4827616|       0.2753287|       0.2753287|
+| Asia      | Afghanistan | I((year - offset)^2) |      -0.0037715|              NA|              NA|
+| Europe    | Albania     | (Intercept)          |      56.8531346|      59.2291282|      59.9416820|
+| Europe    | Albania     | I(year - offset)     |       0.6198024|       0.3346832|       0.3160949|
+| Europe    | Albania     | I((year - offset)^2) |      -0.0051840|              NA|              NA|
+
+Got it:smile: Finally, I will **visualize the differences** in the year coefficient for countries. I'll need to reshape and rearrange the data to do that. I'm not going to be able to fit all 142 countries on the same graph, so I'll just look at the first 7 for exploration purposes.
+
+``` r
+gap_year_coeff <- gap_full_coeff %>% 
+                    filter(parameter=="I(year - offset)") 
+
+gap_year_coeff_melt <- melt(gap_year_coeff, id=c("continent","country","parameter"))
+gap_year_coeff_melt <- arrange(gap_year_coeff_melt, country)
+head(gap_year_coeff_melt)
+```
+
+    ##   continent     country        parameter       variable     value
+    ## 1      Asia Afghanistan I(year - offset) coefficient.qm 0.4827616
+    ## 2      Asia Afghanistan I(year - offset) coefficient.lm 0.2753287
+    ## 3      Asia Afghanistan I(year - offset) coefficient.rm 0.2753287
+    ## 4    Europe     Albania I(year - offset) coefficient.qm 0.6198024
+    ## 5    Europe     Albania I(year - offset) coefficient.lm 0.3346832
+    ## 6    Europe     Albania I(year - offset) coefficient.rm 0.3160949
+
+``` r
+ggplot(gap_year_coeff_melt[1:21,], aes(x=country, y=value, fill=variable)) + 
+      geom_bar(position="dodge", stat="identity") +
+        ylab("Year parameter value") + xlab("Country") +
+          scale_fill_discrete(name="", labels=c("Quadratic model","Linear model","Robust model")) + 
+          theme_bw()
+```
+
+![](Functions_lists_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-22-1.png)
+
+I can see that the coefficients for the year parameter are quite similar for the linear and robust models, and quite different for the quadratic model, just as I'd expect. Unfortunately I'm out of time, but there are a few obvious **next steps** that I'd like to do in the future:
+
+-   Write a function to find the differences in the year coefficients between the quadratic model and the average of the linear and robust models. This would give me an idea of the countries in which there is probably a non-linear term because the squared year term is really affecting the model parameters.
+-   Write a function to calculate the difference between the year coefficients for the linear and robust models for each country. This would give me an idea of which countries have outliers, as these models tend to diverge in the presence of outliers. I would go back to the nested dataframe to run both of these functions.
+-   Extract the standard errors and p-values for each of the models to compare them. I think the broom package would make it relatively easy to do this.
+-   *Any other suggestions?*
+
+**Final thoughts**
+
+I found that there was quite a bit of overhead in nesting the data, and I still find those lists very unwieldy, but once it was in the correct format it was very easy to map the functions to the dataframe for each country. I think I just need to find a better system for viewing the components of lists. In the past I've use 'dlply' and some pretty complicated 'for' loops to accomplish these tasks, and I *think* this is easier, although maybe less intuitive.
