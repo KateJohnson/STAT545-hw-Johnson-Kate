@@ -1,2 +1,0 @@
-"0","#filter(gapminder, country==""Canada"" & year < 1980) # same as..."
-"0","filter(gapminder, country==""Canada"", year < 1970)"
