@@ -1,0 +1,36 @@
+Plots from Gapminder Exploration
+================
+
+Data Exploration
+----------------
+
+![](histogram.lifeExp.png)
+
+Figure 1: Histogram of life expectancy.
+
+![](histogram.gdpPercap.png)
+
+Figure 2: Historgram of per capita GDP.
+
+Life Expectancy over Time
+-------------------------
+
+![](plot.Asia.png)
+
+Figure 3: Life expectancy for all countries in Asia from 1953-2007.
+
+![](plot.Africa.png)
+
+Figure 4: Life expectancy for all countries in Africa from 1953-2007.
+
+![](plot.Americas.png)
+
+Figure 5: Life expectancy for all countries in the Americas from 1953-2007.
+
+![](plot.Europe.png)
+
+Figure 6: Life expectancy for all countries in Europe from 1953-2007.
+
+![](plot.Oceania.png)
+
+Figure 7: Life expectancy for all countries in Oceania from 1953-2007.
