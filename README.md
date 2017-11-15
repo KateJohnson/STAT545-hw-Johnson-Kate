@@ -14,3 +14,5 @@ This is my STAT 545 Homework Repository
 - Assignment 5 **Factor and figure management** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw05-Factors/Factor_figure_management.md)
 
 - Assignment 6 **Functions and nested dataframes** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw06-Functions_lists/Functions_lists.md)
+
+- Assignment 7 **Automating pipelines** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/tree/master/hw07-Automating_Pipelines)
