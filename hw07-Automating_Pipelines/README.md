@@ -1,4 +1,4 @@
-# STAT 545 Homework 7
+# STAT 547 Homework 7
 
 I've automated a pipeline to explore the Gapminder dataset, run a statistical analysis involving linear models, and generate a report with a series of plots. 
 
