@@ -2,6 +2,9 @@ library(shiny)
 library(tidyverse)
 library(knitr)
 library(openssl)
+library(DT)
+library(stringr)
+library(glue)
 
 Server <- function(input, output) {
 bcl_data <- read_csv("bcl-data.csv")
@@ -17,13 +20,19 @@ output$Hist_AlcCount <- renderPlot({
   Filtered_bcl() %>%
     ggplot() +
     aes(x=Alcohol_Content) +
-    geom_histogram(binwidth = 20) + theme_bw() + 
-    xlab("Alcohol Content") + ylab("Number")
+    geom_histogram(aes(fill=..count..), binwidth = 5) + theme_bw() + 
+    xlim(c(0,100)) + 
+    xlab("Alcohol Content (%)") + ylab("Count") + labs(title="Histogram of Alcohol Content") +
+    theme(plot.title = element_text(face="bold", size=16), axis.text=element_text(size=12), 
+          axis.title = element_text(size=14), legend.position="none")
     })
 
-output$table_head <- renderTable({
+output$CountText <- renderText({
+  Filtered_bcl() %>% glue_data("We found {nrow(Filtered_bcl())} options for you!")
+})
+
+output$table_head <- DT::renderDataTable({
   Filtered_bcl()  %>%
-    head()
+    mutate_all(funs(tolower))
 })
 }
-jj
