@@ -5,8 +5,8 @@ account: katejohnson
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 236345
-bundleId: 1079444
+bundleId: 1089464
 url: https://katejohnson.shinyapps.io/My_new_app/
-when: 1510857764.81601
+when: 1511320021.20563
 asMultiple: FALSE
 asStatic: FALSE
