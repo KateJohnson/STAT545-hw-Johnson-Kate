@@ -16,3 +16,5 @@ This is my STAT 545 Homework Repository
 - Assignment 6 **Functions and nested dataframes** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/blob/master/hw06-Functions_lists/Functions_lists.md)
 
 - Assignment 7 **Automating pipelines** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/tree/master/hw07-Automating_Pipelines)
+
+- Assignment 8 **Shiny app** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/tree/master/hw08_Shiny_app)
