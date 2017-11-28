@@ -19,4 +19,4 @@ This is my STAT 545 Homework Repository
 
 - Assignment 8 **Shiny app** is [here](https://github.com/KateJohnson/STAT545-hw-Johnson-Kate/tree/master/hw08_Shiny_app)
 
-- Assignment 9 **R package** is in a seperate [repository](https://github.com/KateJohnson/powers)
+- Assignment 9 **R package** is in a separate [repository](https://github.com/KateJohnson/powers)
